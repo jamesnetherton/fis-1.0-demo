@@ -1,0 +1,24 @@
+<spring:beans xmlns:spring="http://www.springframework.org/schema/beans"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xmlns:jee="http://www.springframework.org/schema/jee"
+              xmlns="http://camel.apache.org/schema/spring"
+              xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+       http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd">
+
+    <jee:jndi-lookup id="datasource" jndi-name="java:jboss/datasources/ExampleDS2" />
+    <jee:jndi-lookup id="datasource2" jndi-name="${env.PATH}" />
+
+    <spring:bean id="echoBean" class="com.github.jamesnetherton.bean.EchoBean">
+        <spring:property name="dataSource" ref="datasource" />
+    </spring:bean>
+
+    <camelContext id="spring-jee">
+        <route>
+            <from uri="timer:ping?period=10s"/>
+            <bean ref="echoBean" method="echo"/>
+        </route>
+    </camelContext>
+
+</spring:beans>
